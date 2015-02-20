@@ -46,4 +46,5 @@
 \i searchapp/search_user_settings.sql
 \i searchapp/views/solr_keywords_lineage.sql
 \i searchapp/subset.sql
+\i searchapp/data_attestation.sql
 \i searchapp/_misc.sql

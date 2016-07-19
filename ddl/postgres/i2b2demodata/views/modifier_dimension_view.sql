@@ -15,7 +15,8 @@ CREATE VIEW modifier_dimension_view AS
     md.modifier_node_type,
     mm.valtype_cd,
     mm.std_units,
-    mm.visit_ind
+    mm.visit_ind,
+    nm.c_tooltip
    FROM (modifier_dimension md
-     LEFT JOIN modifier_metadata mm ON (((md.modifier_cd)::text = (mm.modifier_cd)::text)));
-
+     LEFT JOIN modifier_metadata mm ON (((md.modifier_cd)::text = (mm.modifier_cd)::text))
+     LEFT JOIN neptune_xtrials_metadata nm ON (((md.modifier_cd)::text = (nm.modifier_cd)::text)));

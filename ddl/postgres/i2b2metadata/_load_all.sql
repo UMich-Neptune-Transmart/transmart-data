@@ -1,5 +1,6 @@
 \i i2b2metadata/prelude.sql
 \i i2b2metadata/functions/add_ontology_node.sql
+\i i2b2metadata/functions/add_tooltips.sql
 \i i2b2metadata/custom_meta.sql
 \i i2b2metadata/i2b2.sql
 \i i2b2metadata/i2b2_secure.sql

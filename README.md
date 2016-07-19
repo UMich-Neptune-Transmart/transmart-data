@@ -98,8 +98,25 @@ assigned the correct owner (i.e., the user PostgreSQL runs as), then the
 install target will run into problems when attempting to create the
 tablespaces. If the user PostgreSQL runs as and the user running the targets
 are not the same AND the tablespace directories do not already exist, then
-manual intervention is necessary for creating all the tablespaces' directories
+manual intervention is necessary for creating all the tablespace directories
 and assigning them the correct owner.
+
+### Oracle-specific notes
+
+This install script assumes SYSDBA privileges in order to create the users that
+the application will use. 
+
+You will need to create the tablespaces `TRANSMART` and `INDX` (sic) manually 
+before creating the database. The install script can try to do this 
+automatically if you set `ORACLE_MANAGE_TABLESPACES=1`, but in that case you 
+will need to set `ORACLE_TABLESPACES_DIR` to a directory name (on the database 
+server) where Oracle can automatically create the files to store the new 
+tablespaces and other database objects.
+
+Transmart requires the 'Partitioning' feature of the database, so make sure that
+feature has not been disabled in the Oracle database. 'Partitioning' is (as of
+Oracle Database 12) only supported in Oracle Database Enterprise Edition, so
+Transmart will not run against a lower level edition of Oracle.
 
 ### Drop the database
 
@@ -221,10 +238,12 @@ For instance:
     make -C samples/{oracle,postgres} load_clinical_GSE8581
     make -C samples/{oracle,postgres} load_ref_annotation_GSE8581
     make -C samples/{oracle,postgres} load_expression_GSE8581
-    make -C samples/{oracle,postgres} load_analysis_GSE8581
 
 Do not forget to update your Solr index, if your setup requires it to be
 triggered manually.
+
+### For MacOSX
+The loading scripts use the -e option from the  function readlink. This is a function that is not in the readlink that is installed on Mac OSX, to bypass this problem you are required to install greadlink (stands for GNU readlink). After installing greadlink edit ~/transmart-data/samples/postgres/process_params.inc and on change readlink to greadlink (line 20). Save the changes and the upload should work.
 
 ### Starting Solr
 
@@ -235,13 +254,13 @@ sample explorer:
 
 Once it is running, you can run full imports with:
 
-	make -C solr rwg_full_import sample_full_import
+	make -C solr browse_full_import rwg_full_import sample_full_import
 
 The Faceted Search core also supports delta imports:
 
     make -C solr rwg_delta_import
 
-Due to different functionality in tranSMART versions targetting each RDBMS,
+Due to different functionality in tranSMART versions targeting each RDBMS,
 there's a separate Solr core for Oracle:
 
     ORACLE=1 make -C solr start
@@ -288,9 +307,9 @@ the configuration may have to be changed, but even if it doesn't, some
 directories described in the configuration will need to be created.
 
 If you need to change configuration parameters, you can change the files in
-`~/.grails/transmartConfig` that are createdi by the `install` target, but they
+`~/.grails/transmartConfig` that are created by the `install` target, but they
 will be overwritten (after being backed up) the next time you install the
-configuration again using the same target. Therefore, it is preferrable to copy
+configuration again using the same target. Therefore, it is preferable to copy
 `config/Config-extra.php.sample` into `config/Config-extra.php` and edit the new
 file. In this file, you can edit two blocks of text which will be inserted into
 two different points in the configuration template, allowing you override any
@@ -316,8 +335,8 @@ This part still needs some work, but it goes more or less like this:
 * (If you want to regenerate all the schemas, you can replace the last three
   steps with `make clean_all dump files_all`).
 * If you have data changes, go to `data/postgres`. If you need to dump data from
-  a table no data was being dumped before, add that table to one of the `<schema
-  name>_list` files.
+  a table no data was being dumped from before, add that table to one of the
+  `<schema name>_list` files.
 * Run `make dump`. You can run `make clean_dumps` to delete all the dumps, which
   might be useful e.g. if you deleted tables from the lists of tables that
   should be dumped.

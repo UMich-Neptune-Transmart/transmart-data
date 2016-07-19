@@ -861,6 +861,13 @@
     "child" : {
       "type" : "TABLE",
       "owner" : "I2B2DEMODATA",
+      "name" : "QT_PATIENT_SAMPLE_COLLECTION"
+    },
+    "parents" : [ ]
+  }, {
+    "child" : {
+      "type" : "TABLE",
+      "owner" : "I2B2DEMODATA",
       "name" : "QT_PATIENT_SET_COLLECTION"
     },
     "parents" : [ {
@@ -1166,8 +1173,8 @@
       "owner" : "I2B2DEMODATA",
       "name" : "CONCEPT_DIMENSION"
     }, {
-      "type" : "SYNONYM",
-      "owner" : "TM_CZ",
+      "type" : "SEQUENCE",
+      "owner" : "I2B2DEMODATA",
       "name" : "CONCEPT_ID"
     } ]
   }, {
@@ -2110,6 +2117,13 @@
     "item" : {
       "type" : "TABLE",
       "owner" : "I2B2DEMODATA",
+      "name" : "QT_PATIENT_SAMPLE_COLLECTION"
+    },
+    "file" : "i2b2demodata/qt_patient_sample_collection.sql"
+  }, {
+    "item" : {
+      "type" : "TABLE",
+      "owner" : "I2B2DEMODATA",
       "name" : "QT_PATIENT_SET_COLLECTION"
     },
     "file" : "i2b2demodata/qt_patient_set_collection.sql"
@@ -2378,7 +2392,7 @@
       "owner" : "I2B2DEMODATA",
       "name" : "TRG_CONCEPT_DIMENSION_CD"
     },
-    "file" : "i2b2demodata/_cross.sql"
+    "file" : "i2b2demodata/concept_dimension.sql"
   }, {
     "item" : {
       "type" : "TRIGGER",

@@ -47,6 +47,7 @@
 \i tm_cz/functions/i2b2_create_concept_counts.sql
 \i tm_cz/functions/i2b2_create_external_tables.sql
 \i tm_cz/functions/i2b2_create_security_for_trial.sql
+\i tm_cz/functions/i2b2_create_security_inc_trial.sql
 \i tm_cz/functions/i2b2_create_stage_tables.sql
 \i tm_cz/functions/i2b2_delete_1_node.sql
 \i tm_cz/functions/i2b2_delete_all_nodes.sql
@@ -57,6 +58,7 @@
 \i tm_cz/functions/i2b2_load_annotation_deapp.sql
 \i tm_cz/functions/i2b2_load_chrom_region.sql
 \i tm_cz/functions/i2b2_load_clinical_data.sql
+\i tm_cz/functions/i2b2_load_clinical_inc_data.sql
 \i tm_cz/functions/i2b2_load_eqtl_top50.sql
 \i tm_cz/functions/i2b2_load_from_stage.sql
 \i tm_cz/functions/i2b2_load_gwas_top50.sql
@@ -160,7 +162,6 @@
 \i tm_cz/cz_data_profile_column_exclusi.sql
 \i tm_cz/cz_data_profile_column_sample.sql
 \i tm_cz/cz_data_profile_stats.sql
-\i tm_cz/cz_form_layout.sql
 \i tm_cz/cz_job_audit.sql
 \i tm_cz/cz_job_error.sql
 \i tm_cz/cz_job_master.sql

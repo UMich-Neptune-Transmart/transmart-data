@@ -1208,17 +1208,6 @@
     } ]
   }, {
     "child" : {
-      "type" : "SYNONYM",
-      "owner" : "TM_CZ",
-      "name" : "BIRN"
-    },
-    "parents" : [ {
-      "type" : "TABLE",
-      "owner" : "I2B2METADATA",
-      "name" : "BIRN"
-    } ]
-  }, {
-    "child" : {
       "type" : "TABLE",
       "owner" : "TM_CZ",
       "name" : "CATEGORY_PATH_EXCLUDED_WORDS"
@@ -2085,7 +2074,28 @@
     "child" : {
       "type" : "SEQUENCE",
       "owner" : "TM_CZ",
-      "name" : "CZ_FORM_LAYOUT_SEQ"
+      "name" : "SEQ_CZ_FORM_LAYOUT_ID"
+    },
+    "parents" : [ ]
+  }, {
+    "child" : {
+      "type" : "TABLE",
+      "owner" : "TM_CZ",
+      "name" : "UPDATEZSCORE_PROTEOMICS"
+    },
+    "parents" : [ ]
+  }, {
+    "child" : {
+      "type" : "TABLE",
+      "owner" : "TM_CZ",
+      "name" : "CZ_REQUIRED_UPLOAD_FIELD"
+    },
+    "parents" : [ ]
+  }, {
+    "child" : {
+      "type" : "SEQUENCE",
+      "owner" : "TM_CZ",
+      "name" : "SEQ_REQUIRED_UPLOAD_FIELD_ID"
     },
     "parents" : [ ]
   }, {
@@ -11689,13 +11699,6 @@
     } ]
   }, {
     "child" : {
-      "type" : "SEQUENCE",
-      "owner" : "TM_CZ",
-      "name" : "SEQ_FORM_LAYOUT_ID"
-    },
-    "parents" : [ ]
-  }, {
-    "child" : {
       "type" : "SYNONYM",
       "owner" : "TM_CZ",
       "name" : "SEQ_I2B2_DATA_ID"
@@ -12193,7 +12196,22 @@
     }, {
       "type" : "SEQUENCE",
       "owner" : "TM_CZ",
-      "name" : "SEQ_FORM_LAYOUT_ID"
+      "name" : "SEQ_CZ_FORM_LAYOUT_ID"
+    } ]
+  }, {
+    "child" : {
+      "type" : "TRIGGER",
+      "owner" : "TM_CZ",
+      "name" : "TRG_CZ_REQ_UPLOAD_FIELD_ID"
+    },
+    "parents" : [ {
+      "type" : "TABLE",
+      "owner" : "TM_CZ",
+      "name" : "CZ_REQUIRED_UPLOAD_FIELD"
+    }, {
+      "type" : "SEQUENCE",
+      "owner" : "TM_CZ",
+      "name" : "SEQ_REQUIRED_UPLOAD_FIELD_ID"
     } ]
   }, {
     "child" : {
@@ -14700,7 +14718,7 @@
     "item" : {
       "type" : "SEQUENCE",
       "owner" : "TM_CZ",
-      "name" : "SEQ_FORM_LAYOUT_ID"
+      "name" : "SEQ_CZ_FORM_LAYOUT_ID"
     },
     "file" : "tm_cz/cz_form_layout.sql"
   }, {
@@ -14801,6 +14819,34 @@
       "name" : "TMP_TRIAL_NODES"
     },
     "file" : "tm_cz/tmp_trial_nodes.sql"
+  }, {
+    "item" : {
+      "type" : "TABLE",
+      "owner" : "TM_CZ",
+      "name" : "UPDATEZSCORE_PROTEOMICS"
+    },
+    "file" : "tm_cz/updatezscore_proteomics.sql"
+  }, {
+    "item" : {
+      "type" : "TABLE",
+      "owner" : "TM_CZ",
+      "name" : "CZ_REQUIRED_UPLOAD_FIELD"
+    },
+    "file" : "tm_cz/cz_required_upload_field.sql"
+  }, {
+    "item" : {
+      "type" : "TRIGGER",
+      "owner" : "TM_CZ",
+      "name" : "TRG_CZ_REQ_UPLOAD_FIELD_ID"
+    },
+    "file" : "tm_cz/cz_required_upload_field.sql"
+  }, {
+    "item" : {
+      "type" : "SEQUENCE",
+      "owner" : "TM_CZ",
+      "name" : "SEQ_REQUIRED_UPLOAD_FIELD_ID"
+    },
+    "file" : "tm_cz/cz_required_upload_field.sql"
   }, {
     "item" : {
       "type" : "TRIGGER",

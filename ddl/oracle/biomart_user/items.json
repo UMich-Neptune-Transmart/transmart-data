@@ -322,6 +322,17 @@
     "child" : {
       "type" : "SYNONYM",
       "owner" : "BIOMART_USER",
+      "name" : "BIO_MARKER_CORREL_MV"
+    },
+    "parents" : [ {
+      "type" : "MATERIALIZED_VIEW",
+      "owner" : "BIOMART",
+      "name" : "BIO_MARKER_CORREL_MV"
+    } ]
+  }, {
+    "child" : {
+      "type" : "SYNONYM",
+      "owner" : "BIOMART_USER",
       "name" : "BIO_ASSAY_DATA_STATS"
     },
     "parents" : [ {
@@ -923,17 +934,6 @@
     "child" : {
       "type" : "SYNONYM",
       "owner" : "BIOMART_USER",
-      "name" : "BIO_MARKER_CORREL_MV"
-    },
-    "parents" : [ {
-      "type" : "TABLE",
-      "owner" : "BIOMART",
-      "name" : "BIO_MARKER_CORREL_MV"
-    } ]
-  }, {
-    "child" : {
-      "type" : "SYNONYM",
-      "owner" : "BIOMART_USER",
       "name" : "BIO_MARKER_EXP_ANALYSIS_MV"
     },
     "parents" : [ {
@@ -1039,17 +1039,6 @@
       "type" : "TABLE",
       "owner" : "BIOMART",
       "name" : "BIO_TAXONOMY"
-    } ]
-  }, {
-    "child" : {
-      "type" : "SYNONYM",
-      "owner" : "BIOMART_USER",
-      "name" : "BIRN"
-    },
-    "parents" : [ {
-      "type" : "TABLE",
-      "owner" : "I2B2METADATA",
-      "name" : "BIRN"
     } ]
   }, {
     "child" : {

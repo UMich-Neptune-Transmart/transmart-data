@@ -2,11 +2,11 @@
 
 $spec = [
     'BIOMART_USER' => [
+        ['DEAPP',        '*TABLE',                    'READ', ''],
+        ['DEAPP',        '*VIEW',                     'READ', ''],
         ['BIOMART',      '*TABLE',                    'WRITE', ''],
         ['BIOMART',      '*VIEW',                     'READ', ''],
         ['BIOMART',      '*SEQUENCE',                 'READ', ''],
-        ['DEAPP',        '*TABLE',                    'READ', ''],
-        ['DEAPP',        '*VIEW',                     'READ', ''],
         ['I2B2DEMODATA', '*TABLE',                    'READ', ''],
         ['I2B2DEMODATA', '*VIEW',                     'READ', ''],
         ['I2B2METADATA', '*TABLE',                    'READ', ''],
@@ -18,6 +18,7 @@ $spec = [
         ['FMAPP',        '*SEQUENCE',                 'READ', ''],
         ['AMAPP',        '*TABLE',                    'WRITE', ''],
         ['AMAPP',        '*SEQUENCE',                 'READ', ''],
+        ['AMAPP',        '*VIEW',                     'READ', ''],
         ['I2B2DEMODATA', 'QT_QUERY_MASTER',           'WRITE', ''],
         ['I2B2DEMODATA', 'QT_QUERY_INSTANCE',         'WRITE', ''],
         ['I2B2DEMODATA', 'QT_QUERY_RESULT_INSTANCE',  'WRITE', ''],
@@ -29,19 +30,25 @@ $spec = [
         ['BIOMART',      'BIO_MARKER',                'WRITE', ''],
         ['BIOMART',      'BIO_ASSAY_DATA_ANNOTATION', 'WRITE', ''],
         ['GALAXY',       '*TABLE',                    'WRITE', ''],
+        ['GALAXY',       '*SEQUENCE',                 'READ', ''],
     ],
     'TM_CZ' => [
-        ['BIOMART',      '*TABLE',             'FULL', ''],
-        ['BIOMART',      '*VIEW',              'READ', ''],
-        ['BIOMART',      'TEA_NPV_PRECOMPUTE', 'EXECUTE', ''], /* I2B2_LOAD_OMICSOFT_DATA */
         ['DEAPP',        '*TABLE',             'FULL', ''],
         ['DEAPP',        '*SEQUENCE',          'READ', ''],
+        ['BIOMART',      '*TABLE',             'FULL', ''],
+        ['BIOMART',      '*VIEW',              'READ', ''],
+        ['BIOMART',      '*SEQUENCE',          'READ', ''],
+        ['BIOMART',      'TEA_NPV_PRECOMPUTE', 'EXECUTE', ''], /* I2B2_LOAD_OMICSOFT_DATA */
+        ['BIOMART',      '*SEQUENCE',          'READ', ''],
         ['I2B2DEMODATA', '*TABLE',             'FULL', ''],
+        ['I2B2DEMODATA', '*VIEW',              'READ', ''],
         ['I2B2DEMODATA', '*SEQUENCE',          'READ', ''],
+        ['I2B2DEMODATA', '*VIEW',              'READ', ''],
         ['I2B2METADATA', '*TABLE',             'FULL', ''],
         ['I2B2METADATA', '*SEQUENCE',          'READ', ''],
         ['SEARCHAPP',    '*TABLE',             'FULL', ''],
         ['SEARCHAPP',    '*VIEW',              'READ', ''],
+        ['SEARCHAPP',    '*SEQUENCE',          'READ', ''],
         ['TM_LZ',        '*TABLE',             'FULL', ''],
         ['TM_LZ',        '*VIEW',              'READ', ''],
         ['TM_WZ',        '*TABLE',             'FULL', ''],
@@ -49,10 +56,11 @@ $spec = [
         ['FMAPP',        '*TABLE',             'FULL', ''],
         ['AMAPP',        '*TABLE',             'FULL', ''],
         ['GALAXY',       '*TABLE',             'FULL', ''],
+        ['GALAXY',       '*SEQUENCE',          'READ', ''],
     ],
     'SEARCHAPP' => [
         ['BIOMART', 'BIO_ASSAY_DATA_ANNOTATION', 'READ', 'GRANT_OPTION'],
-        ['BIOMART', 'BIO_MARKER_CORREL_MV',      'READ', 'GRANT_OPTION']
+        ['BIOMART', 'BIO_MARKER_CORREL_MV',      'READ', 'GRANT_OPTION'],
     ],
     'BIOMART' => [
         ['DEAPP', 'DE_METABOLITE_SUPER_PATHWAYS', 'READ', 'GRANT_OPTION'],

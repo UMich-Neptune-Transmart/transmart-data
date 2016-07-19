@@ -33,10 +33,12 @@ PGSQL_BIN=$HOME/pg/bin/
 # }}}
 
 # {{{ Oracle
+# Uncomment this to enable Oracle
+#ORACLE=1
 ORAHOST=localhost
 ORAPORT=1521
 ORASID=orcl
-# If ORASVC (Oracle Service) specified it will be used over ORASID fro
+# If ORASVC (Oracle Service) specified it will be used over ORASID for
 # connection (PDB may be specified this way for Oracle 12c)
 #ORASVC=orcl
 ORAUSER="sys as sysdba"
@@ -46,6 +48,7 @@ ORAPASSWORD=mypassword
 # by transmart-data. In that case, you must also specify an oracle owned
 # directory that will be used to set the system param DB_CREATE_FILE_DEST
 ORACLE_MANAGE_TABLESPACES=0
+# Comment the line below when you use an Oracle Database instance from Amazon RDS.
 ORACLE_TABLESPACES_DIR=/home/oracle/app/oracle/oradata
 # }}}
 
@@ -54,6 +57,8 @@ ORACLE_TABLESPACES_DIR=/home/oracle/app/oracle/oradata
 KETTLE_JOBS_PSQL=/path/to/transmart-ETL/Postgres/GPL-1.0/Kettle/Kettle-ETL/
 # End with /
 KETTLE_JOBS_ORA=/path/to/transmart-ETL/Kettle-GPL/Kettle-ETL/
+
+R_JOBS_PSQL=/path/to/tranSMART-ETL/Kettle/postgres/R/
 
 KITCHEN=/path/to/data-integration/kitchen.sh
 
@@ -106,8 +111,8 @@ TSUSER_HOME=$HOME/
 # export _JAVA_OPTIONS="-Dhttp.proxyHost=$proxy_host -Dhttp.proxyPort=$proxy_port"
 
 export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD TABLESPACES PGSQL_BIN \
-	KETTLE_JOBS_PSQL KETTLE_JOBS_ORA KITCHEN TSUSER_HOME ORAHOST ORAPORT \
+	R_JOBS_PSQL KETTLE_JOBS_PSQL KETTLE_JOBS_ORA KITCHEN TSUSER_HOME ORAHOST ORAPORT \
 	ORASID ORASVC ORAUSER ORAPASSWORD ORACLE_MANAGE_TABLESPACES \
-	ORACLE_TABLESPACES_DIR
+	ORACLE_TABLESPACES_DIR ORACLE
 
 # vim: fdm=marker

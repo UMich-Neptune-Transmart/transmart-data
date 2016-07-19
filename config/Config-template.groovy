@@ -14,27 +14,35 @@
 def catalinaBase      = System.getProperty('catalina.base') ?: '.'
 
 def explodedWarDir    = catalinaBase + '/webapps/transmart'
-def solrPort          = 8080 //port of appserver where solr runs (under ctx path /solr)
+def solrPort          = 8983 //port of appserver where solr runs (under ctx path /solr)
 def searchIndex       = catalinaBase + '/searchIndex' //create this directory
 // for running transmart as WAR, create this directory and then create an alias
 def jobsDirectory     = "/var/tmp/jobs/"
 def oauthEnabled      = true
 def samlEnabled       = false
 def gwavaEnabled      = false
-def transmartURL      = "http://localhost:${System.getProperty('server.port', '8080')}/transmart/"
+def transmartURL      = "http://localhost:${System.getProperty('server.port', '8080')}/transmart"
 
 //Disabling/Enabling UI tabs
 ui {
     tabs {
         //Search was not part of 1.2. It's not working properly. You need to set `show` to `true` to see it on UI
         search.show = false
-        
         browse.hide = false
         //Note: analyze tab is always shown
         sampleExplorer.hide = false
         geneSignature.hide = false
         gwas.hide = false
         uploadData.hide = false
+        datasetExplorer {
+            gridView.hide = false
+            dataExport.hide = false
+            dataExportJobs.hide = false
+            // Note: by default the analysisJobs panel is NOT shown
+            // Currently, it is only used in special cases
+            analysisJobs.show = false
+            workspace.hide = false
+        }
     }
 }
 
@@ -54,7 +62,7 @@ ui {
 
 environments { production {
     if (transmartURL.startsWith('http://localhost:')) {
-        println "[WARN] transmartURL not overriden. Some settings (e.g. help page) may be wrong"
+        println "[WARN] transmartURL not overridden. Some settings (e.g. help page) may be wrong"
     }
 } }
 
@@ -115,22 +123,32 @@ environments {
 }
 /* }}} */
 
+/* {{{ Data Upload Configuration - see GWAS plugin Data Upload page */
+// This is the value that will appear in the To: entry of the e-mail popup 
+// that is displayed when the user clicks the Email administrator button,
+// on the GWAS plugin Data Upload page
+com.recomdata.dataUpload.adminEmail = 'No data upload adminEmail value set - contact site administrator'
+/* }}} */
+
 /* {{{ Personalization */
 // application logo to be used in the login page
 com.recomdata.largeLogo = "transmartlogo.jpg"
 
 // application logo to be used in the search page
-com.recomdata.searchtool.smallLogo="transmartlogosmall.jpg"
+com.recomdata.smallLogo="transmartlogosmall.jpg"
 
 // contact email address
-com.recomdata.contactUs = "mailto:transmart-discuss@googlegroups.com"
+com.recomdata.contactUs = "transmart-discuss@googlegroups.com"
+
+// site administrator contact email address
+com.recomdata.adminEmail = "transmart-discuss@googlegroups.com"
 
 // application title
 com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion
 
-// Location of the help pages
-// Currently, these are distribution with transmart, so it can also point to
-// that location copy. Should be an absolute URL
+// Location of the help pages. Should be an absolute URL.
+// Currently, these are distribution with transmart,
+// so it can also point to that location copy.
 com.recomdata.adminHelpURL = "$transmartURL/help/adminHelp/default.htm"
 
 environments { development {
@@ -145,13 +163,16 @@ environments { development {
 
 /* {{{ Login */
 // Session timeout and heartbeat frequency (ping interval)
-com.recomdata.sessionTimeout = 300
-com.recomdata.heartbeatLaps = 30
+com.recomdata.sessionTimeout = 1800
+com.recomdata.heartbeatLaps = 300
 
 environments { development {
     com.recomdata.sessionTimeout = Integer.MAX_VALUE / 1000 as int /* ~24 days */
     com.recomdata.heartbeatLaps = 900
 } }
+
+// Maximum concurrent sessions for a user (-1: unlimited)
+// org.transmartproject.maxConcurrentUserSessions = 10
 
 // Not enabled by default (see Config-extra.php.sample)
 //com.recomdata.passwordstrength.pattern
@@ -162,9 +183,9 @@ environments { development {
 com.recomdata.guestAutoLogin = false
 environments { development { com.recomdata.guestAutoLogin = true } }
 
-// Guest account user name – if guestAutoLogin is true, this is the username of
+// Guest account user name - if guestAutoLogin is true, this is the username of
 // the account that tranSMART will automatically authenticate users as. This will
-// control the level of access anonymous users will have (the access will be match
+// control the level of access anonymous users will have (the access will match
 // that of the account specified here).
 com.recomdata.guestUserName = 'guest'
 /* }}} */
@@ -174,7 +195,6 @@ com.recomdata.guestUserName = 'guest'
 // Lucene index location for documentation search
 com.recomdata.searchengine.index = searchIndex
 
-/* see also com.recomdata.searchtool.smallogo in the personalization section */
 /* }}} */
 
 /* {{{ Sample Explorer configuration */
@@ -238,29 +258,12 @@ environments {
     RModules.imageURL = "/tempImages/" //must end and start with /
 
     production {
-        // The working direcotry for R scripts, where the jobs get created and
+        // The working directory for R scripts, where the jobs get created and
         // output files get generated
         RModules.tempFolderDirectory = jobsDirectory
-
-        // Whether to copy the images from the jobs directory to another
-        // directory from which they can be served. Should be false for
-        // performance reasons. Files will be served from the
-        // tempFolderDirectory instead, which should be exposed as
-        // <context path>/analysisFiles (formerly: <context path>/tempImages)
-        RModules.transferImageFile = false
-
-        // Copy inside the exploded WAR. In actual production, we don't want this
-        // The web server should be able to serve static files from this
-        // directory via the logical name specified in the imageUrl config entry
-        // Not needed because transferImageFile is false
-        //Rmodules.temporaryImageFolder = explodedWarDir + '/images/tempImages/'
     }
     development {
         RModules.tempFolderDirectory = "/tmp"
-
-        // we have stuff in _Events.groovy to make available the contens in
-        // the tempFolderDirectory
-        RModules.transferImageFile = false
 
         /* we don't need to specify temporaryImageDirectory, because we're not copying */
     }
@@ -268,6 +271,32 @@ environments {
     // Used to access R jobs parent directory outside RModules (e.g. data export)
     com.recomdata.plugins.tempFolderDirectory = RModules.tempFolderDirectory
 }
+/* }}} */
+
+/* {{{ GWAS Configuration */
+
+com.recomdata.dataUpload.appTitle="Upload data to tranSMART"
+com.recomdata.dataUpload.stageScript="run_analysis_stage"
+
+// Directory path of com.recomdata.dataUpload.stageScript
+def gwasEtlDirectory = new File(System.getenv('HOME'), '.grails/transmart-gwasetl')
+
+// Directory to hold GWAS file uploads
+def gwasUploadsDirectory = new File(System.getenv('HOME'), '.grails/transmart-datauploads')
+
+// Directory to preload with template files with names <type>-template.txt
+def gwasTemplatesDirectory = new File(System.getenv('HOME'), '.grails/transmart-templates')
+
+com.recomdata.dataUpload.templates.dir = gwasTemplatesDirectory.absolutePath
+com.recomdata.dataUpload.uploads.dir = gwasUploadsDirectory.absolutePath
+com.recomdata.dataUpload.etl.dir = gwasEtlDirectory.absolutePath
+
+[gwasTemplatesDirectory, gwasUploadsDirectory, gwasEtlDirectory].each {
+    if (!it.exists()) {
+        it.mkdir()
+    }
+}
+
 /* }}} */
 
 /* {{{ Misc Configuration */
@@ -310,7 +339,8 @@ grails { plugin { springsecurity {
     // requestmap in db
     securityConfigType = grails.plugin.springsecurity.SecurityConfigType.Requestmap
     // url to redirect after login in
-    successHandler.defaultTargetUrl = '/userLanding'
+    // just_rest branch provides alternative default via org.transmart.defaultLoginRedirect
+    successHandler.defaultTargetUrl = org.transmart.defaultLoginRedirect ?: '/userLanding'
     // logout url
     logout.afterLogoutUrl = '/login/forceAuth'
 
@@ -325,9 +355,16 @@ grails { plugin { springsecurity {
     } else {
         securityConfigType = 'InterceptUrlMap'
         def oauthEndpoints = [
-            '/oauth/authorize.dispatch'   : ['IS_AUTHENTICATED_REMEMBERED'],
-            '/oauth/token.dispatch'       : ['IS_AUTHENTICATED_REMEMBERED'],
+              '/oauth/authorize.dispatch': ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+              '/oauth/token.dispatch':     ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
         ]
+
+        // This looks dangerous and it possibly is (would need to check), but
+        // reflects the instructions I got from the developer.
+        def gwavaMappings = [
+             '/gwasWeb/**'                : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        ]
+
         interceptUrlMap = [
             '/login/**'                   : ['IS_AUTHENTICATED_ANONYMOUSLY'],
             '/css/**'                     : ['IS_AUTHENTICATED_ANONYMOUSLY'],
@@ -348,7 +385,9 @@ grails { plugin { springsecurity {
             '/secureObjectPath/**'        : ['ROLE_ADMIN'],
             '/userGroup/**'               : ['ROLE_ADMIN'],
             '/secureObjectAccess/**'      : ['ROLE_ADMIN'],
+            '/oauthAdmin/**'              : ['ROLE_ADMIN'],
             *                             : (oauthEnabled ?  oauthEndpoints : [:]),
+            *                             : (gwavaEnabled ?  gwavaMappings : [:]),
             '/**'                         : ['IS_AUTHENTICATED_REMEMBERED'], // must be last
         ]
         rejectIfNoRule = true
@@ -368,9 +407,69 @@ grails { plugin { springsecurity {
     if (oauthEnabled) {
         providerNames << 'clientCredentialsAuthenticationProvider'
 
+        def securedResourcesFilters = [
+                'JOINED_FILTERS',
+                '-securityContextPersistenceFilter',
+                '-logoutFilter',
+                '-rememberMeAuthenticationFilter',
+                '-basicAuthenticationFilter',
+                '-exceptionTranslationFilter',
+        ].join(',')
+
+        filterChain.chainMap = [
+                '/oauth/token': [
+                        'JOINED_FILTERS',
+                        '-oauth2ProviderFilter',
+                        '-securityContextPersistenceFilter',
+                        '-logoutFilter',
+                        '-rememberMeAuthenticationFilter',
+                        '-exceptionTranslationFilter',
+                ].join(','),
+                '/studies/**': securedResourcesFilters,
+                '/observations/**': securedResourcesFilters,
+                '/patient_sets/**': securedResourcesFilters,
+                '/oauth/inspectToken': securedResourcesFilters,
+                '/**': [
+                        'JOINED_FILTERS',
+                        '-statelessSecurityContextPersistenceFilter',
+                        '-oauth2ProviderFilter',
+                        '-clientCredentialsTokenEndpointFilter',
+                        '-basicAuthenticationFilter',
+                        '-oauth2ExceptionTranslationFilter'
+                ].join(','),
+        ]
+
+        grails.exceptionresolver.params.exclude = ['password', 'client_secret']
+
+        def glowingBearRedirectUris = [
+                transmartURL - ~/transmart\/?$/ + 'connections',
+        ]
+        if (transmartURL.startsWith('http://localhost:')) {
+            // for dev, node reverse proxy runs on 8001
+            glowingBearRedirectUris << 'http://localhost:8001/connections'
+        }
+
         oauthProvider {
+            authorization.requireRegisteredRedirectUri = true
+            authorization.requireScope = false
+
             clients = [
-                    [clientId: 'api-client', clientSecret: 'api-client']
+                    [
+                        clientId: 'api-client',
+                        clientSecret: 'api-client',
+                        authorities: ['ROLE_CLIENT'],
+                        scopes: ['read', 'write'],
+                        authorizedGrantTypes: ['authorization_code', 'refresh_token'],
+                        redirectUris: [(transmartURL - ~'\\/$') + '/oauth/verify'],
+                    ],
+                    [
+                        clientId: 'glowingbear-js',
+                        clientSecret: '',
+                        authorities: ['ROLE_CLIENT'],
+                        scopes: ['read', 'write'],
+                        authorizedGrantTypes: ['implicit', 'password'],
+                        redirectUris: glowingBearRedirectUris,
+                    ],
             ]
         }
     }
@@ -393,7 +492,7 @@ if (samlEnabled) {
     }
 
     org { transmart { security {
-        samlEnabled = true
+        setProperty('samlEnabled', true) // clashes with local variable
         ssoEnabled  = "true"
 
         // URL to redirect to after successful authentication
@@ -443,12 +542,12 @@ if (samlEnabled) {
 
                 // Alias of the encryption key in the keystore
                 encryptionKey.alias="saml-encryption"
-                // Password of that the key with above alis in the keystore
+                // Password of the key with above alias in the keystore
                 encryptionKey.password="changeit"
 
                 // Alias of the signing key in the keystore
                 signingKey.alias="saml-signing"
-                // Password of that the key with above alis in the keystore
+                // Password of the key with above alias in the keystore
                 signingKey.password="changeit"
             }
             /* }}} */
@@ -485,18 +584,25 @@ if (samlEnabled) {
     } } }
 } else { // if (!samlEnabled)
     org { transmart { security {
-        samlEnabled = false
+        setProperty('samlEnabled', false) // clashes with local variable
     } } }
 }
 /* }}} */
 
 /* {{{ gwava */
 if (gwavaEnabled) {
-    com.recomdata.rwg.webstart.codebase      = "$transmartURL/gwava"
-    com.recomdata.rwg.webstart.jar           = './ManhattanViz2.1g.jar'
-    com.recomdata.rwg.webstart.mainClass     = 'com.pfizer.mrbt.genomics.Driver'
-    com.recomdata.rwg.webstart.gwavaInstance = 'transmartstg'
-    com.recomdata.rwg.webstart.transmart.url = "$transmartURL/transmart"
+    // assume deployment alongside transmart
+    com { recomdata { rwg { webstart {
+        def url       = new URL(transmartURL)
+        codebase      = "$url.protocol://$url.host${url.port != -1 ? ":$url.port" : ''}/gwava"
+        jar           = './ManhattanViz2.1g.jar'
+        mainClass     = 'com.pfizer.mrbt.genomics.Driver'
+        gwavaInstance = 'transmartstg'
+        transmart.url = transmartURL - ~'\\/$'
+   } } } }
+   com { recomdata { rwg { qqplots {
+       cacheImages = new File(jobsDirectory, 'cachedQQplotImages').toString()
+   } } } }
 }
 /* }}} */
 
@@ -525,6 +631,42 @@ com.recomdata.FmFolderService.importDirectory = fileImportDirectory.absolutePath
         it.mkdir()
     }
 }
+/* }}} */
+
+/* {{{ Sample Explorer configuration */
+
+sampleExplorer {
+    fieldMapping = [
+        columns:[
+            [header:'ID', dataIndex:'id', mainTerm: true, showInGrid: true, width:20],
+            [header:'trial name', dataIndex:'trial_name', mainTerm: true, showInGrid: true, width:20],
+            [header:'barcode', dataIndex:'barcode', mainTerm: true, showInGrid: true, width:20],
+            [header:'plate id', dataIndex:'plate_id', mainTerm: true, showInGrid: true, width:20],
+            [header:'patient id', dataIndex:'patient_id', mainTerm: true, showInGrid: true, width:20],
+            [header:'external id', dataIndex:'external_id', mainTerm: true, showInGrid: true, width:20],
+            [header:'aliquot id', dataIndex:'aliquot_id', mainTerm: true, showInGrid: true, width:20],
+            [header:'visit', dataIndex:'visit', mainTerm: true, showInGrid: true, width:20],
+            [header:'sample type', dataIndex:'sample_type', mainTerm: true, showInGrid: true, width:20],
+            [header:'description', dataIndex:'description', mainTerm: true, showInGrid: true, width:20],
+            [header:'comment', dataIndex:'comment', mainTerm: true, showInGrid: true, width:20],
+            [header:'location', dataIndex:'location', mainTerm: true, showInGrid: true, width:20],
+            [header:'organism', dataIndex:'source_organism', mainTerm: true, showInGrid: true, width:20]
+        ]
+    ]
+    resultsGridHeight = 100
+    resultsGridWidth = 100
+    idfield = 'id'
+}
+
+edu.harvard.transmart.sampleBreakdownMap = [
+    "aliquot_id":"Aliquots in Cohort"
+]
+
+com { recomdata { solr {
+    maxNewsStories = 10
+    maxRows = 10000
+}}}
+
 /* }}} */
 
 // I002 – Insertion point 'end'
